@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>株式会社アーテック 授与品事業専用サイト</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for lightweight state management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts for Traditional & Business Aesthetics -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans JP', 'sans-serif'],
+                        serif: ['Noto Serif JP', 'serif'],
+                    },
+                    colors: {
+                        artec: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#0066cc',
+                            600: '#0052a5',
+                            700: '#004085',
+                            800: '#003366',
+                            900: '#0a2342',
+                        },
+                        shrine: {
+                            gold: '#d4af37',
+                            goldhover: '#b89528',
+                            dark: '#0f172a',
+                            paper: '#f8fafc',
+                            paperdark: '#f1f5f9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased flex flex-col justify-between bg-slate-50" x-data="orderEngine()">
+
+    <!-- Header Navigation -->
+    <header class="bg-white text-slate-900 border-b-4 border-artec-600 shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <span class="text-[10px] tracking-widest text-artec-600 font-bold block">限定公開WEBサイト</span>
+                        <h1 class="text-base sm:text-lg font-serif font-bold tracking-tight text-slate-900">
+                            株式会社アーテック 授与品事業専用サイト
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-2">
+                    <span class="inline-flex items-center gap-1.5 bg-blue-50 text-artec-700 text-xs px-3 py-1.5 rounded-full border border-blue-200 font-bold">
+                        <i data-lucide="lock" class="w-3.5 h-3.5 text-artec-600"></i>
+                        関係者・ご担当者様限定
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+        <!-- Top Info Banner -->
+        <div class="bg-blue-50/80 border border-blue-200 rounded-xl p-4 mb-6 shadow-sm flex items-start gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-artec-600 shrink-0 mt-0.5"></i>
+            <div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                ご希望の授与品・オリジナルグッズ・備品のカテゴリ、仕様、数量、納期などを選択し、オンラインでオーダー仕様の確認・お問合せいただけます。
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- LEFT COLUMN: Form Inputs & Options (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- STEP 1: CATEGORY & MATERIAL SELECTION -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-4">
+                        <span class="w-6 h-6 rounded-full bg-artec-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+                        <h2 class="text-base font-serif font-bold text-slate-900">カテゴリを選択</h2>
+                    </div>
+
+                    <!-- Category Icon Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-6">
+                        <template x-for="(cat, key) in categories" :key="key">
+                            <button 
+                                @click="selectCategory(key)"
+                                :class="selectedCategory === key ? 'border-artec-600 bg-blue-50/70 text-artec-800 ring-2 ring-artec-600/20 font-bold' : 'border-slate-200 hover:border-slate-300 bg-slate-50 text-slate-700'"
+                                class="p-2.5 border rounded-xl flex flex-col items-center justify-center text-center transition duration-200 min-h-[90px]">
+                                <div class="w-8 h-8 mb-1.5 flex items-center justify-center text-artec-600" x-html="cat.iconSvg"></div>
+                                <span class="text-xs" x-text="cat.name"></span>
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- CONDITIONAL CATEGORY 1: Standard Items (御守り・絵馬・キーホルダー) -->
+                    <template x-if="selectedCategory === 'omamori' || selectedCategory === 'ema' || selectedCategory === 'keyholder'">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-2">素材・品目タイプ</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <template x-for="item in currentCategoryItems" :key="item.id">
+                                    <div 
+                                        @click="selectItem(item.id)"
+                                        :class="selectedItemId === item.id ? 'border-artec-600 bg-blue-50/50 ring-1 ring-artec-600 font-bold' : 'border-slate-200 hover:border-slate-300 bg-white'"
+                                        class="p-3.5 border rounded-lg cursor-pointer transition flex items-center space-x-3">
+                                        <input type="radio" :value="item.id" x-model="selectedItemId" class="text-artec-600 focus:ring-artec-500">
+                                        <div class="text-xs sm:text-sm text-slate-900" x-text="item.name"></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- CONDITIONAL CATEGORY 2: Original Goods (オリジナルグッズ) -->
+                    <template x-if="selectedCategory === 'original_goods'">
+                        <div class="space-y-4 border-t border-slate-100 pt-4">
+                            <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200">
+                                <h3 class="font-bold text-slate-900 text-xs sm:text-sm mb-1 flex items-center gap-1.5">
+                                    <i data-lucide="help-circle" class="w-4 h-4 text-artec-600"></i>
+                                    作りたいグッズはどのようなものですか？
+                                </h3>
+                                <p class="text-xs text-slate-600">下記ハッシュタグを参考に、イメージや用途をご自由に入力・ご選択ください。</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">おすすめタグ（タップで入力に追加）</label>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <template x-for="tag in originalGoodsTags" :key="tag">
+                                        <button @click="addTagToCustomText(tag)" type="button" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-blue-100 border border-slate-300 rounded-full text-slate-700 transition">
+                                            <span x-text="tag"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">グッズの詳細・ご要望自由記入欄</label>
+                                <textarea rows="4" x-model="customInquiryText" placeholder="例: オリジナルデザインのキャンバストートバッグとタンブラーを各300個制作したい。ロゴのワンポイント印刷を希望。"
+                                    class="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none bg-white"></textarea>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- CONDITIONAL CATEGORY 3: Equipment (各種備品) -->
+                    <template x-if="selectedCategory === 'equipment'">
+                        <div class="space-y-4 border-t border-slate-100 pt-4">
+                            <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200">
+                                <h3 class="font-bold text-slate-900 text-xs sm:text-sm mb-1 flex items-center gap-1.5">
+                                    <i data-lucide="help-circle" class="w-4 h-4 text-artec-600"></i>
+                                    必要なものはどのようなものですか？
+                                </h3>
+                                <p class="text-xs text-slate-600">境内備品・イベント設営資材・行事用品など、お探しの品目をご記入ください。</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-2">おすすめタグ（タップで入力に追加）</label>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <template x-for="tag in equipmentTags" :key="tag">
+                                        <button @click="addTagToCustomText(tag)" type="button" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-blue-100 border border-slate-300 rounded-full text-slate-700 transition">
+                                            <span x-text="tag"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">備品の詳細・必要数量・ご要望自由記入欄</label>
+                                <textarea rows="4" x-model="customInquiryText" placeholder="例: 例大祭用ハッピ50枚と境内装飾用ライト、名入れ案内看板の製作見積もりをお願いします。"
+                                    class="w-full text-xs p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none bg-white"></textarea>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- STEP 2: QUANTITY SELECTION (DRAG SLIDER) -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-6 h-6 rounded-full bg-artec-600 text-white flex items-center justify-center text-xs font-bold">2</span>
+                            <h2 class="text-base font-serif font-bold text-slate-900">制作数量（ドラッグ選択）</h2>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-xs font-bold text-slate-600">選択中の制作数量</span>
+                            <div class="text-2xl font-serif font-bold text-artec-600">
+                                <span x-text="quantity.toLocaleString()"></span> <span class="text-sm text-slate-600 font-sans">個</span>
+                            </div>
+                        </div>
+
+                        <!-- Range Slider for Dragging -->
+                        <div class="px-2 pt-2">
+                            <input 
+                                type="range" 
+                                min="0" 
+                                :max="quantitySteps.length - 1" 
+                                step="1" 
+                                x-model.number="sliderIndex"
+                                class="w-full h-2.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-artec-600 focus:outline-none">
+                            
+                            <div class="flex justify-between text-[11px] text-slate-400 font-medium mt-2">
+                                <span>100個</span>
+                                <span>500個</span>
+                                <span>1,000個</span>
+                                <span>5,000個</span>
+                                <span>10,000個</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: CUSTOMIZATION & SPECIFICATION OPTIONS -->
+                <template x-if="selectedCategory === 'omamori' || selectedCategory === 'ema' || selectedCategory === 'keyholder'">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-4">
+                            <span class="w-6 h-6 rounded-full bg-artec-600 text-white flex items-center justify-center text-xs font-bold">3</span>
+                            <h2 class="text-base font-serif font-bold text-slate-900">仕様・加工オプション</h2>
+                        </div>
+
+                        <div class="space-y-5">
+                            
+                            <!-- A. Original vs Teiban Selection for Acrylic Omamori & Ema -->
+                            <template x-if="selectedItemId === 'omamori_acrylic' || selectedCategory === 'ema'">
+                                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                                    <label class="block text-xs font-bold text-slate-700 mb-2">タイプ選択</label>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <button type="button" @click="productType = 'オリジナル'"
+                                            :class="productType === 'オリジナル' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800 shadow-sm' : 'border-slate-200 bg-white text-slate-700'"
+                                            class="border rounded-lg p-3 text-center transition">
+                                            オリジナル
+                                        </button>
+                                        <button type="button" @click="productType = '定番'"
+                                            :class="productType === '定番' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800 shadow-sm' : 'border-slate-200 bg-white text-slate-700'"
+                                            class="border rounded-lg p-3 text-center transition">
+                                            定番
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- B. CONDITIONAL: Acrylic Omamori TEIBAN (アクリル御守 定番) -->
+                            <template x-if="selectedItemId === 'omamori_acrylic' && productType === '定番'">
+                                <div class="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-2">定番柄選択</label>
+                                        <div class="grid grid-cols-2 gap-2 text-xs">
+                                            <template x-for="pattern in ['鶴亀　紅紐', '鶴亀　紺紐', '雲海　紅紐', '雲海　紺紐']" :key="pattern">
+                                                <button type="button" @click="teibanOmamoriPattern = pattern"
+                                                    :class="teibanOmamoriPattern === pattern ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2.5 border rounded-lg text-center transition">
+                                                    <span x-text="pattern"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-2">名入れ加工</label>
+                                        <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+                                            <button type="button" @click="hasNamePrinting = '必要(UV)'"
+                                                :class="hasNamePrinting === '必要(UV)' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                class="p-2 border rounded-lg text-center">必要(UV)</button>
+                                            <button type="button" @click="hasNamePrinting = '不要'"
+                                                :class="hasNamePrinting === '不要' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                class="p-2 border rounded-lg text-center">不要</button>
+                                        </div>
+                                        <div x-show="hasNamePrinting === '必要(UV)'">
+                                            <input type="text" x-model="namePrintingText" placeholder="名入れ文字をご入力ください（例：〇〇神社）"
+                                                class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- C. CONDITIONAL: EMA TEIBAN (絵馬 定番) -->
+                            <template x-if="selectedCategory === 'ema' && productType === '定番'">
+                                <div class="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-2">定番柄選択</label>
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                                            <template x-for="pattern in ['干支', '諸願成就', '良縁成就', '学業成就']" :key="pattern">
+                                                <button type="button" @click="teibanEmaPattern = pattern"
+                                                    :class="teibanEmaPattern === pattern ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2.5 border rounded-lg text-center transition">
+                                                    <span x-text="pattern"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-2">名入れ加工</label>
+                                        <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+                                            <button type="button" @click="hasNamePrinting = '必要(UV)'"
+                                                :class="hasNamePrinting === '必要(UV)' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                class="p-2 border rounded-lg text-center">必要(UV)</button>
+                                            <button type="button" @click="hasNamePrinting = '不要'"
+                                                :class="hasNamePrinting === '不要' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                class="p-2 border rounded-lg text-center">不要</button>
+                                        </div>
+                                        <div x-show="hasNamePrinting === '必要(UV)'">
+                                            <input type="text" x-model="namePrintingText" placeholder="名入れ文字をご入力ください（例：〇〇神社）"
+                                                class="w-full text-xs p-2.5 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- D. FULL SPECIFICATIONS FORM FOR ORIGINAL & WOOD ITEMS -->
+                            <template x-if="!(selectedItemId === 'omamori_acrylic' && productType === '定番') && !(selectedCategory === 'ema' && productType === '定番')">
+                                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-4 text-xs">
+                                    
+                                    <!-- SIZE SELECTION TABS -->
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">サイズ選択（タブ）</label>
+                                        
+                                        <!-- Size Tabs: Acrylic Omamori -->
+                                        <template x-if="selectedItemId === 'omamori_acrylic'">
+                                            <div class="flex gap-2 border-b border-slate-200 pb-2">
+                                                <button type="button" @click="sizeOption = 'standard'"
+                                                    :class="sizeOption === 'standard' ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                    class="px-3 py-2 rounded-lg transition">35×65×3㎜</button>
+                                                <button type="button" @click="sizeOption = 'custom'"
+                                                    :class="sizeOption === 'custom' ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                    class="px-3 py-2 rounded-lg transition">別途指定 (自由サイズ)</button>
+                                            </div>
+                                        </template>
+
+                                        <!-- Size Tabs: Wood Omamori -->
+                                        <template x-if="selectedItemId === 'omamori_wood'">
+                                            <div class="flex gap-2 border-b border-slate-200 pb-2">
+                                                <button type="button" @click="sizeOption = 'standard'"
+                                                    :class="sizeOption === 'standard' ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                    class="px-3 py-2 rounded-lg transition">規定（44×70×4㎜）</button>
+                                                <button type="button" @click="sizeOption = 'custom'"
+                                                    :class="sizeOption === 'custom' ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                    class="px-3 py-2 rounded-lg transition">別途指定 (自由サイズ)</button>
+                                            </div>
+                                        </template>
+
+                                        <!-- Size Tabs: Ema -->
+                                        <template x-if="selectedCategory === 'ema'">
+                                            <div class="flex flex-wrap gap-1.5 border-b border-slate-200 pb-2">
+                                                <template x-for="sz in ['普通型（135×90×6㎜）', '五角絵馬', 'ハート絵馬', 'くるま型', '別途指定(自由型)']" :key="sz">
+                                                    <button type="button" @click="emaSize = sz"
+                                                        :class="emaSize === sz ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                        class="px-2.5 py-1.5 rounded-lg text-xs transition" x-text="sz"></button>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Size Tabs: Acrylic Keyholder -->
+                                        <template x-if="selectedItemId === 'keyholder_acrylic'">
+                                            <div class="flex flex-wrap gap-1.5 border-b border-slate-200 pb-2">
+                                                <template x-for="sz in ['丸型（約φ40mm）', 'ユニフォーム型（約40×40mm）', 'お城型（約50×50×5mm）', '正方形型（約50×50×5mm）', '四角型（55×30mm）', '別途指定(自由型)']" :key="sz">
+                                                    <button type="button" @click="keyholderSize = sz"
+                                                        :class="keyholderSize === sz ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                        class="px-2.5 py-1.5 rounded-lg text-xs transition" x-text="sz"></button>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Size Tabs: Wood Keyholder -->
+                                        <template x-if="selectedItemId === 'keyholder_wood'">
+                                            <div class="flex flex-wrap gap-1.5 border-b border-slate-200 pb-2">
+                                                <template x-for="sz in ['丸型（約φ36mm）', '長方形型（約30×55mm）', '正方形型（約38×38mm）', '小判型（約32×50mm）', '楕円型（約30×55mm）', '別途指定(自由型)']" :key="sz">
+                                                    <button type="button" @click="keyholderSize = sz"
+                                                        :class="keyholderSize === sz ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                        class="px-2.5 py-1.5 rounded-lg text-xs transition" x-text="sz"></button>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Custom Size Text Input -->
+                                        <div x-show="isCustomSizeSelected" class="mt-2.5">
+                                            <input type="text" placeholder="ご希望のサイズや寸法をご入力ください（例：50×50mm）" x-model="customSizeText"
+                                                class="w-full p-2 border border-slate-300 rounded bg-white focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                                        </div>
+                                    </div>
+
+                                    <!-- UV Processing -->
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">UV加工</label>
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                            <template x-for="opt in ['表のみ', '裏のみ', '表裏両方', 'なし']" :key="opt">
+                                                <button type="button" @click="uvProcessing = opt"
+                                                    :class="uvProcessing === opt ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2 border rounded-lg text-center transition" x-text="opt"></button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- Laser Processing (Not available for Acrylic Keyholder or Omamori) -->
+                                    <template x-if="selectedItemId === 'omamori_wood' || selectedCategory === 'ema' || selectedItemId === 'keyholder_wood'">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1.5">レーザー加工</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                <template x-for="opt in ['表のみ', '裏のみ', '表裏両方', 'なし']" :key="opt">
+                                                    <button type="button" @click="laserProcessing = opt"
+                                                        :class="laserProcessing === opt ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                        class="p-2 border rounded-lg text-center transition" x-text="opt"></button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Foil Stamping Processing -->
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">箔押し加工</label>
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                            <template x-for="opt in ['表のみ', '裏のみ', '表裏両方', 'なし']" :key="opt">
+                                                <button type="button" @click="foilProcessing = opt"
+                                                    :class="foilProcessing === opt ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2 border rounded-lg text-center transition" x-text="opt"></button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- Foil Types Selection -->
+                                    <div x-show="foilProcessing !== 'なし'" class="p-3 bg-blue-50/60 border border-blue-200 rounded-lg space-y-2">
+                                        <div class="text-xs font-bold text-artec-800">箔種類</div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div x-show="foilProcessing === '表のみ' || foilProcessing === '表裏両方'">
+                                                <label class="block text-[11px] font-bold text-slate-600 mb-1">表：</label>
+                                                <select x-model="foilFrontType" class="w-full border border-slate-300 rounded p-1.5 bg-white">
+                                                    <option value="金">金</option>
+                                                    <option value="銀">銀</option>
+                                                    <option value="ホログラム金">ホログラム金</option>
+                                                    <option value="ホログラム銀">ホログラム銀</option>
+                                                </select>
+                                            </div>
+                                            <div x-show="foilProcessing === '裏のみ' || foilProcessing === '表裏両方'">
+                                                <label class="block text-[11px] font-bold text-slate-600 mb-1">裏：</label>
+                                                <select x-model="foilBackType" class="w-full border border-slate-300 rounded p-1.5 bg-white">
+                                                    <option value="金">金</option>
+                                                    <option value="銀">銀</option>
+                                                    <option value="ホログラム金">ホログラム金</option>
+                                                    <option value="ホログラム銀">ホログラム銀</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Knot Cord (結び紐: 御守りのみ表示、キーホルダー・絵馬は非表示) -->
+                                    <template x-if="selectedCategory === 'omamori'">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1.5">結び紐（タブ選択）</label>
+                                            <div class="flex flex-wrap gap-1.5 border-b border-slate-200 pb-2">
+                                                <template x-for="c in ['紅', '紺', '山吹', '深緑', '淡青', '淡水', '淡桃', '淡紫', 'なし']" :key="c">
+                                                    <button type="button" @click="knotCord = c"
+                                                        :class="knotCord === c ? 'bg-artec-600 text-white font-bold' : 'bg-white text-slate-700 border border-slate-200'"
+                                                        class="px-2.5 py-1 rounded-lg text-xs transition" x-text="c"></button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Backing Paper (台紙: 絵馬には表示しない) -->
+                                    <template x-if="selectedCategory !== 'ema'">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1.5">台紙</label>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <button type="button" @click="hasBackingPaper = 'あり'"
+                                                    :class="hasBackingPaper === 'あり' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2 border rounded-lg text-center">あり</button>
+                                                <button type="button" @click="hasBackingPaper = 'なし'"
+                                                    :class="hasBackingPaper === 'なし' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2 border rounded-lg text-center">なし</button>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Packaging (包装: 絵馬には表示しない) -->
+                                    <template x-if="selectedCategory !== 'ema'">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-700 mb-1.5">包装</label>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <button type="button" @click="hasPackaging = 'あり'"
+                                                    :class="hasPackaging === 'あり' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2 border rounded-lg text-center">あり</button>
+                                                <button type="button" @click="hasPackaging = 'なし'"
+                                                    :class="hasPackaging === 'なし' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                                    class="p-2 border rounded-lg text-center">なし</button>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                </div>
+                            </template>
+
+                        </div>
+                    </div>
+                </template>
+
+                <!-- STEP 4: DESIGN DATA & FILE ATTACHMENT -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-4">
+                        <span class="w-6 h-6 rounded-full bg-artec-600 text-white flex items-center justify-center text-xs font-bold">4</span>
+                        <h2 class="text-base font-serif font-bold text-slate-900">入稿データ・添付ファイル</h2>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1.5">入稿データの形式を選択</label>
+                            <select x-model="selectedDesignOption" class="w-full border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:ring-2 focus:ring-artec-600 bg-white">
+                                <option value="ai_complete">完全データ入稿(ai)</option>
+                                <option value="pdf_image">イメージデータ入稿(PDF)</option>
+                                <option value="rough_sketch">その他ラフ入稿</option>
+                            </select>
+                        </div>
+
+                        <!-- File Upload Box -->
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1.5">デザイン・参考資料ファイルの添付（任意）</label>
+                            <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center bg-slate-50 hover:bg-slate-100/80 transition cursor-pointer relative">
+                                <input type="file" @change="handleFileSelect($event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mx-auto mb-1"></i>
+                                <p class="text-slate-700 font-bold">クリックしてファイルを選択、またはドロップ</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">ai, pdf, png, jpg, zip (最大20MB)</p>
+                                
+                                <template x-if="attachedFileName">
+                                    <div class="mt-3 bg-emerald-50 border border-emerald-200 text-emerald-800 p-2 rounded-lg flex items-center justify-between text-xs">
+                                        <span class="truncate font-bold" x-text="'添付済み: ' + attachedFileName"></span>
+                                        <button type="button" @click.stop="attachedFileName = ''" class="text-emerald-700 hover:text-emerald-900 font-bold ml-2">削除</button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5: SAMPLE REQUEST -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-4">
+                        <span class="w-6 h-6 rounded-full bg-artec-600 text-white flex items-center justify-center text-xs font-bold">5</span>
+                        <h2 class="text-base font-serif font-bold text-slate-900">サンプル確認</h2>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <label class="block font-bold text-slate-700">事前サンプル確認の有無</label>
+                        <div class="grid grid-cols-2 gap-3 max-w-xs">
+                            <button type="button" @click="sampleRequirement = '必要'"
+                                :class="sampleRequirement === '必要' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                class="p-2.5 border rounded-lg text-center transition">必要</button>
+                            <button type="button" @click="sampleRequirement = '不要'"
+                                :class="sampleRequirement === '不要' ? 'border-artec-600 bg-blue-50 font-bold text-artec-800' : 'border-slate-200 bg-white text-slate-700'"
+                                class="p-2.5 border rounded-lg text-center transition">不要</button>
+                        </div>
+                        <p class="text-xs text-artec-800 font-bold bg-blue-50 p-2 rounded border border-blue-200 inline-block">
+                            ※ サンプル必要な場合は「納期＋1週間」のお時間をいただきます。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- STEP 6: DELIVERY DATE SPECIFICATION -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center space-x-2 border-b border-slate-100 pb-3 mb-4">
+                        <span class="w-6 h-6 rounded-full bg-artec-600 text-white flex items-center justify-center text-xs font-bold">6</span>
+                        <h2 class="text-base font-serif font-bold text-slate-900">納期指定</h2>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <label class="block font-bold text-slate-700">希望納品日</label>
+                        <input type="date" x-model="deliveryDate" class="w-full sm:w-auto border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:ring-2 focus:ring-artec-600 bg-white">
+                        <p class="text-xs text-artec-700 font-bold mt-1 bg-blue-50 p-2 rounded border border-blue-200">
+                            <span x-text="deliveryNoticeText"></span>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Order Summary Confirmation Panel (5 cols) -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-20 bg-slate-900 text-slate-100 rounded-2xl shadow-xl border border-slate-800 p-6 space-y-6">
+                    
+                    <!-- AI Assistant Section -->
+                    <div class="bg-gradient-to-br from-artec-900 to-slate-800 rounded-xl p-4 border border-blue-500/30 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="flex h-2 w-2 relative">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                <h4 class="text-xs font-bold text-blue-300 font-serif flex items-center gap-1.5">
+                                    <i data-lucide="sparkles" class="w-4 h-4 text-artec-500"></i>
+                                    Gemini AI 企画・モックアップアシスタント
+                                </h4>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <button @click="generateAiConcept()" :disabled="aiLoading" class="w-full py-2 px-3 bg-blue-600/30 hover:bg-blue-600/50 text-blue-200 border border-blue-500/40 rounded-lg transition font-medium flex items-center justify-center gap-1.5 disabled:opacity-50">
+                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-yellow-400"></i>
+                                <span>企画・デザイン提案</span>
+                            </button>
+                            <button @click="generateAiMockup()" :disabled="aiLoading" class="w-full py-2 px-3 bg-artec-600/40 hover:bg-artec-600/60 text-blue-100 border border-artec-500/40 rounded-lg transition font-medium flex items-center justify-center gap-1.5 disabled:opacity-50">
+                                <i data-lucide="image" class="w-3.5 h-3.5 text-blue-400"></i>
+                                <span>AI 試作モックアップ生成</span>
+                            </button>
+                        </div>
+
+                        <!-- AI Loading Indicator -->
+                        <div x-show="aiLoading" class="p-3 bg-slate-800/80 rounded-lg border border-slate-700 text-center space-y-2">
+                            <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-blue-400 border-t-transparent"></div>
+                            <p class="text-[11px] text-blue-200" x-text="aiLoadingText"></p>
+                        </div>
+
+                        <!-- AI Generated Image Preview -->
+                        <div x-show="aiMockupUrl" class="space-y-1.5">
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>AI試作モックアップ</span>
+                                <button @click="aiMockupUrl = ''" class="text-slate-400 hover:text-white">消去</button>
+                            </div>
+                            <div class="rounded-lg overflow-hidden border border-slate-700 bg-slate-950/60 max-h-56 flex items-center justify-center p-1">
+                                <img :src="aiMockupUrl" alt="AI Mockup Preview" class="max-h-52 w-auto object-contain rounded">
+                            </div>
+                        </div>
+
+                        <!-- AI Advice Box -->
+                        <div x-show="aiAdviceText" class="p-3 bg-slate-800/90 rounded-lg border border-slate-700 space-y-1.5">
+                            <div class="flex justify-between items-center text-[11px] font-bold text-blue-300">
+                                <span>AI提案・キャッチコピー</span>
+                                <button @click="copyAiAdvice()" class="text-slate-400 hover:text-white flex items-center gap-1 text-[10px]">
+                                    <i data-lucide="copy" class="w-3 h-3"></i> コピー
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-slate-200 whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto pr-1" x-text="aiAdviceText"></p>
+                        </div>
+                    </div>
+
+                    <div class="border-b border-slate-800 pb-4 flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] tracking-widest text-blue-400 font-serif uppercase">SPECIFICATION SUMMARY</span>
+                            <h3 class="text-lg font-serif font-bold text-white">ご注文仕様の確認</h3>
+                        </div>
+                    </div>
+
+                    <!-- Order Details Summary List -->
+                    <div class="bg-slate-800/80 rounded-xl p-4 border border-slate-700 text-xs space-y-3 text-slate-300">
+                        <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                            <span class="text-slate-400">選択カテゴリ</span>
+                            <span class="font-bold text-blue-300 text-sm" x-text="categories[selectedCategory].name"></span>
+                        </div>
+
+                        <template x-if="selectedCategory === 'omamori' || selectedCategory === 'ema' || selectedCategory === 'keyholder'">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                    <span class="text-slate-400">品目タイプ</span>
+                                    <span class="font-bold text-white text-xs" x-text="currentItem.name + (productType ? ' (' + productType + ')' : '')"></span>
+                                </div>
+
+                                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                    <span class="text-slate-400">制作数量</span>
+                                    <span class="font-bold text-white text-sm" x-text="quantity.toLocaleString() + ' 個'"></span>
+                                </div>
+
+                                <!-- Display Teiban Pattern or Full Specs -->
+                                <template x-if="isTeibanSelected">
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-400">定番柄</span>
+                                            <span class="text-slate-100" x-text="selectedCategory === 'ema' ? teibanEmaPattern : teibanOmamoriPattern"></span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-400">名入れ加工</span>
+                                            <span class="text-slate-100" x-text="hasNamePrinting + (hasNamePrinting === '必要(UV)' && namePrintingText ? ' (' + namePrintingText + ')' : '')"></span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template x-if="!isTeibanSelected">
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-400">サイズ</span>
+                                            <span class="text-slate-100" x-text="formattedSizeDisplay"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-400">UV加工</span>
+                                            <span class="text-slate-100" x-text="uvProcessing"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center" x-show="selectedItemId === 'omamori_wood' || selectedCategory === 'ema' || selectedItemId === 'keyholder_wood'">
+                                            <span class="text-slate-400">レーザー加工</span>
+                                            <span class="text-slate-100" x-text="laserProcessing"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-400">箔押し加工</span>
+                                            <span class="text-slate-100" x-text="foilProcessing"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center" x-show="foilProcessing !== 'なし'">
+                                            <span class="text-slate-400">箔種類</span>
+                                            <span class="text-slate-100" x-text="'表: ' + foilFrontType + ' / 裏: ' + foilBackType"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center" x-show="selectedCategory === 'omamori'">
+                                            <span class="text-slate-400">結び紐</span>
+                                            <span class="text-slate-100" x-text="knotCord"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center" x-show="selectedCategory !== 'ema'">
+                                            <span class="text-slate-400">台紙</span>
+                                            <span class="text-slate-100" x-text="hasBackingPaper"></span>
+                                        </div>
+
+                                        <div class="flex justify-between items-center" x-show="selectedCategory !== 'ema'">
+                                            <span class="text-slate-400">包装</span>
+                                            <span class="text-slate-100" x-text="hasPackaging"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template x-if="selectedCategory === 'original_goods' || selectedCategory === 'equipment'">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+                                    <span class="text-slate-400">概算希望数量</span>
+                                    <span class="font-bold text-white text-sm" x-text="quantity.toLocaleString() + ' 個/個体'"></span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400 block mb-1">ご要望メモ:</span>
+                                    <p class="text-slate-200 bg-slate-900/60 p-2 rounded text-[11px] line-clamp-3" x-text="customInquiryText || '未入力'"></p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="flex justify-between items-center border-t border-slate-700 pt-2">
+                            <span class="text-slate-400">入稿データ</span>
+                            <span class="text-blue-300 font-bold" x-text="designOptionLabel"></span>
+                        </div>
+
+                        <div class="flex justify-between items-center" x-show="attachedFileName">
+                            <span class="text-slate-400">添付ファイル</span>
+                            <span class="text-emerald-400 truncate max-w-[150px]" x-text="attachedFileName"></span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">サンプル確認</span>
+                            <span class="text-slate-100 font-bold" x-text="sampleRequirement"></span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-400">希望納品日</span>
+                            <span class="text-slate-100" x-text="deliveryDate || '未指定'"></span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-2.5 pt-2">
+                        <button @click="openInquiryModal = true" class="w-full py-3.5 px-4 bg-gradient-to-r from-artec-600 to-blue-600 hover:from-artec-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-2 text-sm">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>この内容でお問合せ・送信する</span>
+                        </button>
+
+                        <button @click="copyEstimateText()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700 transition flex items-center justify-center space-x-1">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>仕様テキストをコピー</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- INQUIRY / TRANSMISSION MODAL -->
+    <div x-show="openInquiryModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4" x-cloak>
+        <div @click.away="openInquiryModal = false" class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative text-slate-800">
+            <button @click="openInquiryModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 rounded-lg bg-artec-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                    アー
+                </div>
+                <div>
+                    <h3 class="font-serif font-bold text-base text-slate-900">授与品 お問合せ送信</h3>
+                    <p class="text-xs text-slate-500">ご指定のお問合せ先メールアドレスへオーダー仕様を送信します</p>
+                </div>
+            </div>
+
+            <form @submit.prevent="submitInquiry()" class="space-y-3 text-xs">
+                
+                <!-- Destination Email Input -->
+                <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200">
+                    <label class="block font-bold text-artec-800 mb-1">送信先メールアドレス <span class="text-artec-600">*</span></label>
+                    <input type="email" required placeholder="example@artec.co.jp (送信したいメール宛先)" x-model="inquiryForm.recipientEmail" 
+                        class="w-full p-2.5 border border-blue-300 rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none bg-white font-bold text-slate-900">
+                    <p class="text-[11px] text-artec-700 mt-1">※ 入力された上記アドレス宛にお問合せ仕様・データが直接送信されます。</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">御社名・法人名（神社仏閣・各種団体名） <span class="text-artec-600">*</span></label>
+                    <input type="text" required placeholder="例: 株式会社〇〇 / 〇〇神社 / 〇〇保存会" x-model="inquiryForm.organizationName" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">ご担当者様お名前 <span class="text-artec-600">*</span></label>
+                        <input type="text" required placeholder="例: 山田 太郎" x-model="inquiryForm.contactName" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">お電話番号 <span class="text-artec-600">*</span></label>
+                        <input type="tel" required placeholder="03-0000-0000" x-model="inquiryForm.phone" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">差出人（お客様）メールアドレス <span class="text-artec-600">*</span></label>
+                    <input type="email" required placeholder="yourname@domain.jp" x-model="inquiryForm.senderEmail" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">その他ご要望・ご相談・補足メッセージ</label>
+                    <textarea rows="3" placeholder="ご相談内容や特記事項などがございましたらご記入ください" x-model="inquiryForm.message" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-artec-600 focus:outline-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-artec-600 hover:bg-artec-700 text-white font-bold rounded-xl transition text-sm shadow-md mt-2 flex items-center justify-center space-x-2">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    <span>上記メールアドレス宛に送信する</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div x-show="toast.show" x-transition class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center space-x-2 text-xs" x-cloak>
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span x-text="toast.message"></span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-3">
+            <div class="flex items-center justify-center space-x-2 text-blue-400 font-serif font-bold text-sm">
+                <span>株式会社アーテック 授与品事業専用サイト</span>
+            </div>
+            <p class="text-slate-500 max-w-xl mx-auto">
+                高品質なアクリル守り・木札・絵馬・キーホルダー・オリジナルグッズ等、法人様および神社仏閣様の制作を高度にサポートいたします。
+            </p>
+            <p class="text-slate-600 text-[11px]">© 株式会社アーテック All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function orderEngine() {
+            return {
+                selectedCategory: 'omamori',
+                selectedItemId: 'omamori_acrylic',
+                sliderIndex: 4, // default 500
+                productType: 'オリジナル', // 'オリジナル', '定番'
+                
+                aiLoading: false,
+                aiLoadingText: '',
+                aiAdviceText: '',
+                aiMockupUrl: '',
+
+                // Teiban Patterns & Name printing
+                teibanOmamoriPattern: '鶴亀　紅紐',
+                teibanEmaPattern: '干支',
+                hasNamePrinting: '不要',
+                namePrintingText: '',
+
+                // Size options
+                sizeOption: 'standard', // 'standard', 'custom'
+                customSizeText: '',
+                emaSize: '普通型（135×90×6㎜）',
+                keyholderSize: '丸型（約φ40mm）',
+                
+                // Processing options
+                uvProcessing: '表のみ',
+                laserProcessing: 'なし',
+                foilProcessing: 'なし',
+                foilFrontType: '金',
+                foilBackType: '金',
+                knotCord: '紅',
+                hasBackingPaper: 'あり',
+                hasPackaging: 'あり',
+
+                // Design data & Attachment
+                selectedDesignOption: 'ai_complete',
+                attachedFileName: '',
+
+                // Steps 5 & 6
+                sampleRequirement: '不要',
+                deliveryDate: '',
+
+                // Custom Goods & Equipment Fields
+                customInquiryText: '',
+                openInquiryModal: false,
+
+                originalGoodsTags: ['#バッグ', '#Tシャツ', '#マグカップ', '#タンブラー', '#玩具', '#文具', '#日用雑貨', '#防犯防災商品', '#記念品'],
+                equipmentTags: ['#風鈴', '#笹', '#ライト', '#装飾品', '#イベント用品', '#看板・標識', '#ハッピ', '#ICTグッズ', '#防犯防災品'],
+
+                quantitySteps: [
+                    100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+                    2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000
+                ],
+
+                inquiryForm: {
+                    recipientEmail: '',
+                    organizationName: '',
+                    contactName: '',
+                    phone: '',
+                    senderEmail: '',
+                    message: ''
+                },
+
+                toast: {
+                    show: false,
+                    message: ''
+                },
+
+                categories: {
+                    omamori: { 
+                        name: '御守り', 
+                        iconSvg: `<svg class="w-6 h-6 text-artec-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5z"/><path d="M12 6v6"/><circle cx="12" cy="15" r="1"/></svg>`
+                    },
+                    ema: { 
+                        name: '絵馬', 
+                        iconSvg: `<svg class="w-6 h-6 text-artec-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8l8-5 8 5v11H4V8z"/><path d="M12 3v5"/><circle cx="12" cy="11" r="2"/></svg>`
+                    },
+                    keyholder: { 
+                        name: 'キーホルダー', 
+                        iconSvg: `<svg class="w-6 h-6 text-artec-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-3 3l-4 4m0 0l-1.5-1.5M12 11l-3 3m0 0l-3 3m0 0a3 3 0 11-4.24-4.24 3 3 0 014.24 4.24z"/></svg>`
+                    },
+                    original_goods: { 
+                        name: 'オリジナルグッズ', 
+                        iconSvg: `<svg class="w-6 h-6 text-artec-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M16 8V6a4 4 0 00-8 0v2"/></svg>`
+                    },
+                    equipment: { 
+                        name: '各種備品', 
+                        iconSvg: `<svg class="w-6 h-6 text-artec-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`
+                    }
+                },
+
+                items: [
+                    { id: 'omamori_acrylic', cat: 'omamori', name: 'アクリル製 御守り' },
+                    { id: 'omamori_wood', cat: 'omamori', name: '木製 御守り' },
+                    { id: 'ema_wood', cat: 'ema', name: '木製 絵馬' },
+                    { id: 'keyholder_acrylic', cat: 'keyholder', name: 'アクリル製 キーホルダー' },
+                    { id: 'keyholder_wood', cat: 'keyholder', name: '木製 キーホルダー' }
+                ],
+
+                get quantity() {
+                    return this.quantitySteps[this.sliderIndex] || 500;
+                },
+
+                get isTeibanSelected() {
+                    if (this.selectedItemId === 'omamori_acrylic' && this.productType === '定番') return true;
+                    if (this.selectedCategory === 'ema' && this.productType === '定番') return true;
+                    return false;
+                },
+
+                get currentCategoryItems() {
+                    return this.items.filter(i => i.cat === this.selectedCategory);
+                },
+
+                get currentItem() {
+                    return this.items.find(i => i.id === this.selectedItemId) || this.items[0];
+                },
+
+                get isCustomSizeSelected() {
+                    if (this.selectedItemId === 'omamori_acrylic' || this.selectedItemId === 'omamori_wood') {
+                        return this.sizeOption === 'custom';
+                    }
+                    if (this.selectedCategory === 'ema') {
+                        return this.emaSize === '別途指定(自由型)';
+                    }
+                    if (this.selectedCategory === 'keyholder') {
+                        return this.keyholderSize === '別途指定(自由型)';
+                    }
+                    return false;
+                },
+
+                get formattedSizeDisplay() {
+                    if (this.selectedItemId === 'omamori_acrylic') {
+                        if (this.sizeOption === 'standard') return '35×65×3㎜';
+                        return '別途指定: ' + (this.customSizeText || '未入力');
+                    }
+                    if (this.selectedItemId === 'omamori_wood') {
+                        if (this.sizeOption === 'standard') return '規定（44×70×4㎜）';
+                        return '別途指定: ' + (this.customSizeText || '未入力');
+                    }
+                    if (this.selectedCategory === 'ema') {
+                        if (this.emaSize === '別途指定(自由型)') return '別途指定: ' + (this.customSizeText || '未入力');
+                        return this.emaSize;
+                    }
+                    if (this.selectedCategory === 'keyholder') {
+                        if (this.keyholderSize === '別途指定(自由型)') return '別途指定: ' + (this.customSizeText || '未入力');
+                        return this.keyholderSize;
+                    }
+                    return '規定サイズ';
+                },
+
+                get designOptionLabel() {
+                    switch (this.selectedDesignOption) {
+                        case 'ai_complete': return '完全データ入稿(ai)';
+                        case 'pdf_image': return 'イメージデータ入稿(PDF)';
+                        case 'rough_sketch': return 'その他ラフ入稿';
+                        default: return '完全データ入稿(ai)';
+                    }
+                },
+
+                get deliveryNoticeText() {
+                    if (this.isTeibanSelected) {
+                        return '※ 定番品は「通常2週間から」となります。';
+                    }
+                    return '※ オリジナルは「通常4週間から」となります。';
+                },
+
+                selectCategory(catKey) {
+                    this.selectedCategory = catKey;
+                    const available = this.items.filter(i => i.cat === catKey);
+                    if (available.length > 0) {
+                        this.selectedItemId = available[0].id;
+                    }
+                    if (catKey === 'keyholder' && this.selectedItemId === 'keyholder_acrylic') {
+                        this.keyholderSize = '丸型（約φ40mm）';
+                    }
+                },
+
+                selectItem(itemId) {
+                    this.selectedItemId = itemId;
+                    if (itemId === 'keyholder_acrylic') {
+                        this.keyholderSize = '丸型（約φ40mm）';
+                    } else if (itemId === 'keyholder_wood') {
+                        this.keyholderSize = '丸型（約φ36mm）';
+                    }
+                },
+
+                addTagToCustomText(tag) {
+                    if (!this.customInquiryText.includes(tag)) {
+                        this.customInquiryText += (this.customInquiryText ? ' ' : '') + tag;
+                    }
+                },
+
+                handleFileSelect(e) {
+                    const files = e.target.files;
+                    if (files.length > 0) {
+                        this.attachedFileName = files[0].name;
+                        this.showToast('ファイルを添付しました: ' + files[0].name);
+                    }
+                },
+
+                showToast(msg) {
+                    this.toast.message = msg;
+                    this.toast.show = true;
+                    setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
+
+                copyEstimateText() {
+                    let text = `【株式会社アーテック 神社仏閣様向け オーダー仕様】\n` +
+                        `カテゴリ: ${this.categories[this.selectedCategory].name}\n`;
+
+                    if (this.selectedCategory === 'omamori' || this.selectedCategory === 'ema' || this.selectedCategory === 'keyholder') {
+                        text += `品名: ${this.currentItem.name}` + (this.productType ? ` (${this.productType})` : '') + `\n` +
+                            `数量: ${this.quantity.toLocaleString()} 個\n`;
+
+                        if (this.isTeibanSelected) {
+                            text += `定番柄: ${this.selectedCategory === 'ema' ? this.teibanEmaPattern : this.teibanOmamoriPattern}\n` +
+                                `名入れ加工: ${this.hasNamePrinting}` + (this.hasNamePrinting === '必要(UV)' ? ` (${this.namePrintingText})` : '') + `\n`;
+                        } else {
+                            text += `サイズ: ${this.formattedSizeDisplay}\n` +
+                                `UV加工: ${this.uvProcessing}\n`;
+
+                            if (this.selectedItemId === 'omamori_wood' || this.selectedCategory === 'ema' || this.selectedItemId === 'keyholder_wood') {
+                                text += `レーザー加工: ${this.laserProcessing}\n`;
+                            }
+
+                            text += `箔押し加工: ${this.foilProcessing}\n` +
+                                (this.foilProcessing !== 'なし' ? `箔種類 (表: ${this.foilFrontType} / 裏: ${this.foilBackType})\n` : '');
+
+                            if (this.selectedCategory === 'omamori') {
+                                text += `結び紐: ${this.knotCord}\n`;
+                            }
+
+                            if (this.selectedCategory !== 'ema') {
+                                text += `台紙: ${this.hasBackingPaper}\n` +
+                                    `包装: ${this.hasPackaging}\n`;
+                            }
+                        }
+                    } else {
+                        text += `概算希望数量: ${this.quantity.toLocaleString()} 個/個体\n` +
+                            `ご要望メモ: ${this.customInquiryText}\n`;
+                    }
+
+                    text += `入稿データ: ${this.designOptionLabel}\n` +
+                        `添付ファイル: ${this.attachedFileName || 'なし'}\n` +
+                        `サンプル確認: ${this.sampleRequirement}\n` +
+                        `希望納品日: ${this.deliveryDate || '未指定'}`;
+
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+
+                    this.showToast('仕様テキストをクリップボードにコピーしました');
+                },
+
+                submitInquiry() {
+                    if (!this.inquiryForm.recipientEmail) {
+                        this.showToast('送信先メールアドレスをご入力ください');
+                        return;
+                    }
+                    this.openInquiryModal = false;
+                    this.showToast(this.inquiryForm.recipientEmail + ' 宛にお問合せを送信いたしました');
+                    this.inquiryForm.organizationName = '';
+                    this.inquiryForm.contactName = '';
+                    this.inquiryForm.phone = '';
+                    this.inquiryForm.senderEmail = '';
+                    this.inquiryForm.message = '';
+                },
+
+                async generateAiConcept() {
+                    this.aiLoading = true;
+                    this.aiLoadingText = 'Gemini AI が提案・キャッチコピーを生成中...';
+                    this.aiAdviceText = '';
+
+                    const categoryName = this.categories[this.selectedCategory].name;
+                    const itemName = this.currentItem.name;
+                    const specs = this.isTeibanSelected ? 
+                        `定番柄: ${this.selectedCategory === 'ema' ? this.teibanEmaPattern : this.teibanOmamoriPattern}` :
+                        `仕様: サイズ(${this.formattedSizeDisplay}), UV加工(${this.uvProcessing}), 箔押し(${this.foilProcessing})`;
+
+                    const systemPrompt = "あなたは伝統授与品および法人ノベルティ・各種記念品の専門企画マーケターです。神聖さ・高級感・信頼感を兼ね備えた丁寧な日本語で回答してください。";
+                    const prompt = `カテゴリ「${categoryName}（${itemName}）」の制作についての企画アイデアとキャッチコピーを提案してください。\n仕様: ${specs}\n自由メモ: ${this.customInquiryText || '特になし'}\n\n以下の要素を含めて短く簡潔に提示してください：\n1. おすすめのデザインコンセプトとテーマ\n2. 授与・贈答用メッセージ/キャッチコピー案（3案）\n3. 箔押しや紐色などのおすすめカラーバリエーション理由`;
+
+                    try {
+                        const response = await this.callGeminiTextApi(prompt, systemPrompt);
+                        this.aiAdviceText = response || '提案の生成に失敗しました。';
+                    } catch (err) {
+                        this.aiAdviceText = 'エラーが発生しました。時間を置いて再度お試しください。';
+                    } finally {
+                        this.aiLoading = false;
+                    }
+                },
+
+                async generateAiMockup() {
+                    this.aiLoading = true;
+                    this.aiLoadingText = 'Imagen AI が試作モックアップ画像を生成中...';
+                    
+                    const categoryName = this.categories[this.selectedCategory].name;
+                    const itemName = this.currentItem.name;
+                    const prompt = `A clean product photography mockup of a Japanese traditional ${categoryName} (${itemName}), ${this.productType} style, elegant craft, detailed texture, isolated on soft studio lighting background, photo realistic, high detail 8k resolution.`;
+
+                    try {
+                        const imageUrl = await this.callImagenApi(prompt);
+                        if (imageUrl) {
+                            this.aiMockupUrl = imageUrl;
+                            this.showToast('AI試作モックアップ画像を生成しました');
+                        } else {
+                            this.showToast('画像の生成に失敗しました');
+                        }
+                    } catch (err) {
+                        this.showToast('画像生成中にエラーが発生しました');
+                    } finally {
+                        this.aiLoading = false;
+                    }
+                },
+
+                async callGeminiTextApi(prompt, systemPrompt, retryCount = 0) {
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                    
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: systemPrompt ? { parts: [{ text: systemPrompt }] } : undefined
+                    };
+
+                    try {
+                        const res = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!res.ok) {
+                            if (retryCount < 3) {
+                                await new Promise(r => setTimeout(r, Math.pow(2, retryCount) * 1000));
+                                return this.callGeminiTextApi(prompt, systemPrompt, retryCount + 1);
+                            }
+                            throw new Error('API request failed');
+                        }
+
+                        const data = await res.json();
+                        return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    } catch (e) {
+                        if (retryCount < 3) {
+                            await new Promise(r => setTimeout(r, Math.pow(2, retryCount) * 1000));
+                            return this.callGeminiTextApi(prompt, systemPrompt, retryCount + 1);
+                        }
+                        throw e;
+                    }
+                },
+
+                async callImagenApi(prompt, retryCount = 0) {
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+
+                    const payload = {
+                        instances: [{ prompt: prompt }],
+                        parameters: { sampleCount: 1 }
+                    };
+
+                    try {
+                        const res = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!res.ok) {
+                            if (retryCount < 3) {
+                                await new Promise(r => setTimeout(r, Math.pow(2, retryCount) * 1000));
+                                return this.callImagenApi(prompt, retryCount + 1);
+                            }
+                            throw new Error('Imagen request failed');
+                        }
+
+                        const data = await res.json();
+                        const base64Bytes = data.predictions?.[0]?.bytesBase64Encoded;
+                        return base64Bytes ? `data:image/png;base64,${base64Bytes}` : null;
+                    } catch (e) {
+                        if (retryCount < 3) {
+                            await new Promise(r => setTimeout(r, Math.pow(2, retryCount) * 1000));
+                            return this.callImagenApi(prompt, retryCount + 1);
+                        }
+                        throw e;
+                    }
+                },
+
+                copyAiAdvice() {
+                    if (!this.aiAdviceText) return;
+                    const textarea = document.createElement('textarea');
+                    textarea.value = this.aiAdviceText;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    this.showToast('AI提案文をコピーしました');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html
